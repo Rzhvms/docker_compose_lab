@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Demo</title>
+    <style>
+        /* Body and background */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+            transition: background 0.5s;
+        }
+
+        /* Container card */
+        .container {
+            background: white;
+            padding: 3rem 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Title */
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #111;
+        }
+
+        /* Button */
+        button {
+            background: linear-gradient(90deg, #007aff, #0a84ff);
+            border: none;
+            color: white;
+            padding: 0.9rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        button:hover {
+            background: linear-gradient(90deg, #0a84ff, #007aff);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Result box */
+        .result {
+            margin-top: 2rem;
+            font-size: 1rem;
+            color: #333;
+            line-height: 1.6;
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: #f7f9fc;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
+            min-height: 80px;
+            white-space: pre-wrap;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Текст</h1>
+        <button id="fetchBtn">Получить текст</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const button = document.getElementById('fetchBtn');
+        const resultDiv = document.getElementById('result');
+
+        button.addEventListener('click', async () => {
+            resultDiv.classList.remove('show');
+            resultDiv.textContent = 'Загрузка...';
+            resultDiv.style.opacity = '0.6';
+            try {
+                const response = await fetch('http://localhost:5082/api/text');
+                const data = await response.json();
+                
+                if (data.text) {
+                    resultDiv.textContent = data.text;
+                } else {
+                    resultDiv.textContent = JSON.stringify(data, null, 2);
+                }
+                resultDiv.classList.add('show');
+            } catch (error) {
+                resultDiv.textContent = 'Ошибка: ' + error.message;
+                resultDiv.classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>
